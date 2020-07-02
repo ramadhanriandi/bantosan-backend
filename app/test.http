@@ -1,0 +1,14 @@
+POST http://localhost:8080/demo/api/users/insert
+Content-Type: application/json
+Accept: application/json
+X-Person-Name: Rian
+
+{
+  "userId": 1,
+  "name": "Riandi",
+  "birthdate": 1,
+  "address": "1",
+  "gender": "1"
+}
+
+###
