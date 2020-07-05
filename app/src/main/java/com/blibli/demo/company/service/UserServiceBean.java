@@ -23,26 +23,26 @@ public class UserServiceBean implements UserService {
 		userRepository.save(user);
 	}
 
-	@Override
-	public Flux<User> bulkInsert(int total) {
-		return createFlux(total)
-						.map(integer -> newUser())
-						.flatMap(user -> userRepository.save(user))
-						.doOnNext(user -> log.debug("Success insert user id = {}", user.getUserId()))
-						.doOnComplete(() -> log.debug("Success insert total {} users", total));
-	}
+//	@Override
+//	public Flux<User> bulkInsert(int total) {
+//		return createFlux(total)
+//						.map(integer -> newUser())
+//						.flatMap(user -> userRepository.save(user))
+//						.doOnNext(user -> log.debug("Success insert user id = {}", user.getUserId()))
+//						.doOnComplete(() -> log.debug("Success insert total {} users", total));
+//	}
 
-	private Flux<Integer> createFlux(int total) {
-		return Flux.range(1, total);
-	}
-
-	private User newUser() {
-		return User.builder()
-								.userId(1)
-								.name("User")
-								.address("Address")
-								.birthdate(1)
-								.gender("M")
-								.build();
-	}
+//	private Flux<Integer> createFlux(int total) {
+//		return Flux.range(1, total);
+//	}
+//
+//	private User newUser() {
+//		return User.builder()
+//								.userId(1)
+//								.name("User")
+//								.address("Address")
+//								.birthdate(1)
+//								.gender("M")
+//								.build();
+//	}
 }

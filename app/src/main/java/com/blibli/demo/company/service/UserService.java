@@ -7,5 +7,5 @@ public interface UserService {
 
 	void create(User user);
 
-	Flux<User> bulkInsert(int total);
+//	Flux<User> bulkInsert(int total);
 }

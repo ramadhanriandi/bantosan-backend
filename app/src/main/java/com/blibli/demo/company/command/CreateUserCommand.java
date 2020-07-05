@@ -25,7 +25,8 @@ public class CreateUserCommand implements Command<CreateUserRequest, CreateUserR
 
   private User createUser(CreateUserRequest request) {
     User user = User.builder()
-            .userId(1)
+            .status("Unverified")
+            .role("User")
             .build();
     BeanUtils.copyProperties(request, user);
     return user;

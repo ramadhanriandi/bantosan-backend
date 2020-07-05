@@ -10,13 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateUserResponse {
-  private Integer userId;
-
-  private String name;
-
-  private long birthdate;
-
-  private String address;
-
-  private String gender;
+  private String username;
+  private String email;
 }
