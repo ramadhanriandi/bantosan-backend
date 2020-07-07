@@ -1,56 +1,72 @@
 package com.blibli.demo.company.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 import com.blibli.demo.base.MongoBaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = User.COLLECTION_NAME)
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Document(collection = "users")
 public class User extends MongoBaseEntity {
-
-	public static final String COLLECTION_NAME = "users";
-
-	public static final String FIELD_USERNAME = "username";
-	public static final String FIELD_EMAIL = "email";
-	public static final String FIELD_PASSWORD = "password";
-	public static final String FIELD_FULLNAME = "fullname";
-	public static final String FIELD_PHONE = "phone";
-	public static final String FIELD_STATUS = "status";
-	public static final String FIELD_ROLE = "role";
-	public static final String FIELD_AVATAR = "avatar";
-	public static final String FIELD_IDENTITY = "identity";
-
-	@Field(value = User.FIELD_USERNAME)
+	@NotBlank
+	@Size(max = 20)
 	private String username;
 
-	@Field(value = User.FIELD_EMAIL)
+	@NotBlank
+	@Size(max = 50)
+	@Email
 	private String email;
 
-	@Field(value = User.FIELD_PASSWORD)
+	@NotBlank
+	@Size(max = 120)
 	private String password;
 
-	@Field(value = User.FIELD_FULLNAME)
-	private String fullname;
+	@DBRef
+	private Set<Role> roles = new HashSet<>();
 
-	@Field(value = User.FIELD_PHONE)
-	private String phone;
+	public User() {
+	}
 
-	@Field(value = User.FIELD_STATUS)
-	private String status;
+	public User(String username, String email, String password) {
+		this.username = username;
+		this.email = email;
+		this.password = password;
+	}
 
-	@Field(value = User.FIELD_ROLE)
-	private String role;
+	public String getUsername() {
+		return username;
+	}
 
-	@Field(value = User.FIELD_AVATAR)
-	private String avatar;
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-	@Field(value = User.FIELD_IDENTITY)
-	private String identity;
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
 }

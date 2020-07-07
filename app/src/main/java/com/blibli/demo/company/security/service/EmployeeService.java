@@ -1,4 +1,4 @@
-package com.blibli.demo.company.service;
+package com.blibli.demo.company.security.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

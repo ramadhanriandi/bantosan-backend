@@ -1,7 +1,6 @@
 package com.blibli.demo.company.controller;
 
 import com.blibli.demo.company.command.CreateUserCommand;
-import com.blibli.demo.company.model.Person;
 import com.blibli.demo.company.model.command.CreateUserRequest;
 import com.blibli.demo.company.model.web.CreateUserResponse;
 import com.blibli.oss.command.CommandExecutor;
@@ -17,14 +16,14 @@ import reactor.core.scheduler.Schedulers;
 @Slf4j
 @CrossOrigin
 @RestController
-@RequestMapping(value = UserControllerPath.BASE_PATH)
-public class UserController {
+@RequestMapping(value = UserMongoControllerPath.BASE_PATH)
+public class UserMongoController {
 
 //	@Autowired
 //	private UserService userService;
 
-	@Autowired
-	private CommandExecutor commandExecutor;
+//	@Autowired
+//	private CommandExecutor commandExecutor;
 
 //	@RequestMapping(method = RequestMethod.POST)
 //	public Flux<User> bulkInsert() {
@@ -32,16 +31,16 @@ public class UserController {
 //						.subscribeOn(Schedulers.elastic());
 //	}
 
-	@RequestMapping(
-					method = RequestMethod.POST,
-					produces = MediaType.APPLICATION_JSON_VALUE,
-					consumes = MediaType.APPLICATION_JSON_VALUE
-	)
-	public Mono<Response<CreateUserResponse>> insert(@RequestBody CreateUserRequest request) {
-//    log.info("Request from {}", person.getName());
-	  return commandExecutor.execute(CreateUserCommand.class, request)
-						.map(ResponseHelper::ok)
-						.subscribeOn(Schedulers.elastic());
-	}
+//	@RequestMapping(
+//					method = RequestMethod.POST,
+//					produces = MediaType.APPLICATION_JSON_VALUE,
+//					consumes = MediaType.APPLICATION_JSON_VALUE
+//	)
+//	public Mono<Response<CreateUserResponse>> insert(@RequestBody CreateUserRequest request) {
+////    log.info("Request from {}", person.getName());
+//	  return commandExecutor.execute(CreateUserCommand.class, request)
+//						.map(ResponseHelper::ok)
+//						.subscribeOn(Schedulers.elastic());
+//	}
 
 }

@@ -20,7 +20,7 @@ import com.blibli.demo.base.ListBaseResponse;
 import com.blibli.demo.base.Metadata;
 import com.blibli.demo.base.SingleBaseResponse;
 import com.blibli.demo.company.entity.Employee;
-import com.blibli.demo.company.service.EmployeeService;
+import com.blibli.demo.company.security.service.EmployeeService;
 import com.blibli.demo.dto.EmployeeRequest;
 import com.blibli.demo.dto.EmployeeResponse;
 

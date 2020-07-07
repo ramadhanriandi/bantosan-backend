@@ -1,9 +1,8 @@
-package com.blibli.demo.company.service;
+package com.blibli.demo.company.security.service;
 
 import com.blibli.demo.company.entity.User;
-import reactor.core.publisher.Flux;
 
-public interface UserService {
+public interface UserMongoService {
 
 	void create(User user);
 

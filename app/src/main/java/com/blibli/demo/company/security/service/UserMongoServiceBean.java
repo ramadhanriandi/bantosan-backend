@@ -1,15 +1,14 @@
-package com.blibli.demo.company.service;
+package com.blibli.demo.company.security.service;
 
 import com.blibli.demo.company.entity.User;
 import com.blibli.demo.company.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 
 @Slf4j
 @Service
-public class UserServiceBean implements UserService {
+public class UserMongoServiceBean implements UserMongoService {
 
 //	public final int THREAD_NUMBER = 5;
 

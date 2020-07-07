@@ -2,7 +2,7 @@ package com.blibli.demo.company.controller;
 
 import com.blibli.demo.base.ListBaseResponse;
 import com.blibli.demo.company.entity.About;
-import com.blibli.demo.company.service.AboutService;
+import com.blibli.demo.company.security.service.AboutService;
 import com.blibli.demo.dto.AboutResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

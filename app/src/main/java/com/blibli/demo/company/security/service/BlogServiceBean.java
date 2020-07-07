@@ -1,10 +1,8 @@
-package com.blibli.demo.company.service;
+package com.blibli.demo.company.security.service;
 
 import com.blibli.demo.company.entity.Blog;
 import com.blibli.demo.company.repository.BlogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.blibli.demo.company.service;
+package com.blibli.demo.company.security.service;
 
 import com.blibli.demo.company.entity.Contact;
 
