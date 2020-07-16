@@ -21,9 +21,11 @@ import com.blibli.demo.company.security.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -125,5 +127,17 @@ public class AuthController {
     userRepository.save(user);
 
     return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+  }
+
+  @RequestMapping(
+          method = RequestMethod.POST,
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          value = AuthControllerPath.LOGOUT
+  )
+  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+  public ResponseEntity logoutUser() {
+    SecurityContext securityContext = SecurityContextHolder.getContext();
+    securityContext.setAuthentication(null);
+    return ResponseEntity.ok(new MessageResponse("logout successful"));
   }
 }
