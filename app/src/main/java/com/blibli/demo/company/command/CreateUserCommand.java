@@ -18,22 +18,26 @@ public class CreateUserCommand implements Command<CreateUserRequest, CreateUserR
 
   @Override
   public Mono<CreateUserResponse> execute(CreateUserRequest request) {
-    return Mono.fromCallable(() -> createUser(request))
-            .flatMap(user -> userRepository.save(user))
-            .map(user -> createUserResponse(user));
+//    return Mono.fromCallable(() -> createUser(request))
+//            .flatMap(user -> userRepository.save(user))
+//            .map(user -> createUserResponse(user));
+    return null;
   }
 
   private User createUser(CreateUserRequest request) {
-    User user = User.builder()
-            .userId(1)
-            .build();
-    BeanUtils.copyProperties(request, user);
-    return user;
+//    User user = User.builder()
+//            .status("Unverified")
+//            .role("User")
+//            .build();
+//    BeanUtils.copyProperties(request, user);
+//    return user;
+    return null;
   }
 
   private CreateUserResponse createUserResponse(User user) {
-    CreateUserResponse response = new CreateUserResponse();
-    BeanUtils.copyProperties(user, response);
-    return response;
+//    CreateUserResponse response = new CreateUserResponse();
+//    BeanUtils.copyProperties(user, response);
+//    return response;
+    return null;
   }
 }

@@ -1,40 +1,45 @@
 package com.blibli.demo.company.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 import com.blibli.demo.base.MongoBaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = User.COLLECTION_NAME)
+@Document(collection = "users")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User extends MongoBaseEntity {
+	@NotBlank
+	@Size(max = 20)
+	private String username;
 
-	public static final String COLLECTION_NAME = "users";
+	@NotBlank
+	@Size(max = 50)
+	@Email
+	private String email;
 
-	public static final String FIELD_USER_ID = "userId";
-	public static final String FIELD_NAME = "name";
-	public static final String FIELD_BIRTHDATE = "birthdate";
-	public static final String FIELD_ADDRESS = "address";
-	public static final String FIELD_GENDER = "gender";
+	@NotBlank
+	@Size(max = 120)
+	private String password;
 
-	@Field(value = User.FIELD_USER_ID)
-	private Integer userId;
+	@DBRef
+	private Set<Role> roles = new HashSet<>();
 
-	@Field(value = User.FIELD_NAME)
-	private String name;
-
-	@Field(value = User.FIELD_BIRTHDATE)
-	private long birthdate;
-
-	@Field(value = User.FIELD_ADDRESS)
-	private String address;
-
-	@Field(value = User.FIELD_GENDER)
-	private String gender;
+	public User(String username, String email, String password) {
+		this.username = username;
+		this.email = email;
+		this.password = password;
+	}
 }

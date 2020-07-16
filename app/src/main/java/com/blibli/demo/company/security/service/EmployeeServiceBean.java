@@ -1,4 +1,4 @@
-package com.blibli.demo.company.service;
+package com.blibli.demo.company.security.service;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;

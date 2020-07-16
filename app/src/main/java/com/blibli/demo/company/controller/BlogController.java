@@ -4,7 +4,7 @@ import com.blibli.demo.base.BaseResponse;
 import com.blibli.demo.base.ListBaseResponse;
 import com.blibli.demo.base.SingleBaseResponse;
 import com.blibli.demo.company.entity.Blog;
-import com.blibli.demo.company.service.BlogService;
+import com.blibli.demo.company.security.service.BlogService;
 import com.blibli.demo.dto.BlogRequest;
 import com.blibli.demo.dto.BlogResponse;
 import org.springframework.beans.BeanUtils;

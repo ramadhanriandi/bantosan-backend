@@ -4,25 +4,30 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-
+import java.util.Set;
+import javax.validation.constraints.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateUserRequest {
-  private Integer userId;
-
-  @Length(max = 100, message = "Too long name")
-  private String name;
-
-  private long birthdate;
+  @NotBlank
+  @Size(min = 3, max = 20)
+  private String username;
 
   @NotBlank
-  private String address;
+  @Size(max = 50)
+  @Email
+  private String email;
+
+  private Set<String> roles;
 
   @NotBlank
-  private String gender;
+  @Size(min = 6, max = 40)
+  private String password;
+
+  public String getUsername() {
+    return username;
+  }
 }
