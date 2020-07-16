@@ -7,13 +7,14 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.blibli.demo.base.BaseResponse;
+import com.blibli.demo.base.SingleBaseResponse;
 import com.blibli.demo.company.entity.User;
 import com.blibli.demo.company.entity.ERole;
 import com.blibli.demo.company.entity.Role;
 import com.blibli.demo.company.model.command.CreateUserRequest;
 import com.blibli.demo.company.model.command.LoginRequest;
 import com.blibli.demo.company.model.web.JwtResponse;
-import com.blibli.demo.company.model.web.MessageResponse;
 import com.blibli.demo.company.repository.RoleRepository;
 import com.blibli.demo.company.repository.UserRepository;
 import com.blibli.demo.company.security.jwt.JwtUtils;
@@ -68,11 +69,8 @@ public class AuthController {
             .map(item -> item.getAuthority())
             .collect(Collectors.toList());
 
-    return ResponseEntity.ok(new JwtResponse(jwt,
-            userDetails.getId(),
-            userDetails.getUsername(),
-            userDetails.getEmail(),
-            roles));
+    return ResponseEntity.ok(new SingleBaseResponse<>(null, null, true, null,
+            new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles)));
   }
 
   @RequestMapping(
@@ -85,13 +83,13 @@ public class AuthController {
     if (userRepository.existsByUsername(signUpRequest.getUsername())) {
       return ResponseEntity
               .badRequest()
-              .body(new MessageResponse("Error: Username is already taken!"));
+              .body(new BaseResponse("Error: Username is already taken!", "409", false, null));
     }
 
     if (userRepository.existsByEmail(signUpRequest.getEmail())) {
       return ResponseEntity
               .badRequest()
-              .body(new MessageResponse("Error: Email is already in use!"));
+              .body(new BaseResponse("Error: Email is already in use!", "409", false, null));
     }
 
     // Create new user's account
@@ -126,7 +124,7 @@ public class AuthController {
     user.setRoles(roles);
     userRepository.save(user);
 
-    return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    return ResponseEntity.ok(new BaseResponse(null, null, true, null));
   }
 
   @RequestMapping(
@@ -138,6 +136,7 @@ public class AuthController {
   public ResponseEntity logoutUser() {
     SecurityContext securityContext = SecurityContextHolder.getContext();
     securityContext.setAuthentication(null);
-    return ResponseEntity.ok(new MessageResponse("logout successful"));
+
+    return ResponseEntity.ok(new BaseResponse(null, null, true, null));
   }
 }
