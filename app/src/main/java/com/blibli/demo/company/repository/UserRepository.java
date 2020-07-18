@@ -10,6 +10,8 @@ public interface UserRepository extends MongoRepository<User, String> {
 //	Page<User> findByMarkForDeleteFalse(Pageable pageable);
 
 //	long deleteByUserId(Integer userId);
+  User findFirstById(String userId);
+
   Optional<User> findByUsername(String username);
 
   Boolean existsByUsername(String username);
