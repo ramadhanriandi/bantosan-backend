@@ -9,16 +9,21 @@ import javax.validation.Valid;
 
 import com.blibli.demo.base.BaseResponse;
 import com.blibli.demo.base.SingleBaseResponse;
+import com.blibli.demo.company.constant.UserStatus;
 import com.blibli.demo.company.entity.User;
 import com.blibli.demo.company.entity.ERole;
 import com.blibli.demo.company.entity.Role;
 import com.blibli.demo.company.model.command.CreateUserRequest;
 import com.blibli.demo.company.model.command.LoginRequest;
+import com.blibli.demo.company.model.command.UpdateUserRequest;
 import com.blibli.demo.company.model.web.JwtResponse;
+import com.blibli.demo.company.model.web.UpdateUserResponse;
 import com.blibli.demo.company.repository.RoleRepository;
 import com.blibli.demo.company.repository.UserRepository;
 import com.blibli.demo.company.security.jwt.JwtUtils;
 import com.blibli.demo.company.security.service.UserDetailsImpl;
+import com.blibli.demo.company.security.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +54,9 @@ public class AuthController {
 
   @Autowired
   JwtUtils jwtUtils;
+
+  @Autowired
+  private UserService userService;
 
   @RequestMapping(
           method = RequestMethod.POST,
@@ -95,7 +103,8 @@ public class AuthController {
     // Create new user's account
     User user = new User(signUpRequest.getUsername(),
             signUpRequest.getEmail(),
-            encoder.encode(signUpRequest.getPassword()));
+            encoder.encode(signUpRequest.getPassword()),
+            UserStatus.UNVERIFIED);
 
     Set<String> strRoles = signUpRequest.getRoles();
     Set<Role> roles = new HashSet<>();
@@ -125,6 +134,34 @@ public class AuthController {
     userRepository.save(user);
 
     return ResponseEntity.ok(new BaseResponse(null, null, true, null));
+  }
+
+  @RequestMapping(
+          method = RequestMethod.PUT,
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          consumes = MediaType.APPLICATION_JSON_VALUE,
+          value = AuthControllerPath.UPDATE_BY_ID
+  )
+  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+  public ResponseEntity updateUser(@PathVariable String userId, @Valid @RequestBody UpdateUserRequest updateUserRequest) throws Exception {
+    User user = User.builder().build();
+    BeanUtils.copyProperties(updateUserRequest, user);
+
+    User updatedUser = this.userService.update(userId, user);
+
+    return ResponseEntity.ok(new SingleBaseResponse<>(
+            null,
+            null,
+            true,
+            null,
+            new UpdateUserResponse(
+                    updatedUser.getUsername(),
+                    updatedUser.getEmail(),
+                    updatedUser.getFullname(),
+                    updatedUser.getPhone(),
+                    updatedUser.getStatus()
+            )
+    ));
   }
 
   @RequestMapping(
