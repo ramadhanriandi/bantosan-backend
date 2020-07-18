@@ -19,6 +19,7 @@ import com.blibli.demo.company.model.command.CreateUserRequest;
 import com.blibli.demo.company.model.command.LoginRequest;
 import com.blibli.demo.company.model.command.UpdateUserRequest;
 import com.blibli.demo.company.model.web.GetAllUsersResponse;
+import com.blibli.demo.company.model.web.GetUserByIdResponse;
 import com.blibli.demo.company.model.web.JwtResponse;
 import com.blibli.demo.company.model.web.UpdateUserResponse;
 import com.blibli.demo.company.repository.RoleRepository;
@@ -165,6 +166,26 @@ public class UserController {
                     null
             )
     );
+  }
+
+  @RequestMapping(
+          method = RequestMethod.GET,
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          value = UserControllerPath.GET_BY_ID
+  )
+  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+  public ResponseEntity getUserById(@PathVariable String userId) throws Exception {
+    User user = this.userService.findByUserId(userId);
+    GetUserByIdResponse userResponse = GetUserByIdResponse.builder().build();
+    BeanUtils.copyProperties(user, userResponse);
+
+    return ResponseEntity.ok(new SingleBaseResponse<>(
+            null,
+            null,
+            true,
+            null,
+            userResponse
+    ));
   }
 
   @RequestMapping(

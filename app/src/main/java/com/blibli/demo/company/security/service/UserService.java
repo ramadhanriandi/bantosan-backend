@@ -10,6 +10,8 @@ public interface UserService {
 
 	List<User> find();
 
+	User findByUserId(String userId);
+
 	User update(String userId, User user) throws Exception;
 
 //	Flux<User> bulkInsert(int total);

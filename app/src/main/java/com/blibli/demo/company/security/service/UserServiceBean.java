@@ -48,6 +48,9 @@ public class UserServiceBean implements UserService {
 	}
 
 	@Override
+	public User findByUserId(String userId) { return userRepository.findFirstById(userId); };
+
+	@Override
 	public User update(String userId, User user) throws Exception {
 		User updatedUser = userRepository.findFirstById(userId);
 
