@@ -1,5 +1,6 @@
 package com.blibli.demo.company.controller;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import com.blibli.demo.base.BaseResponse;
+import com.blibli.demo.base.ListBaseResponse;
 import com.blibli.demo.base.SingleBaseResponse;
 import com.blibli.demo.company.constant.UserStatus;
 import com.blibli.demo.company.entity.User;
@@ -16,6 +18,8 @@ import com.blibli.demo.company.entity.Role;
 import com.blibli.demo.company.model.command.CreateUserRequest;
 import com.blibli.demo.company.model.command.LoginRequest;
 import com.blibli.demo.company.model.command.UpdateUserRequest;
+import com.blibli.demo.company.model.web.GetAllUsersResponse;
+import com.blibli.demo.company.model.web.GetUserByIdResponse;
 import com.blibli.demo.company.model.web.JwtResponse;
 import com.blibli.demo.company.model.web.UpdateUserResponse;
 import com.blibli.demo.company.repository.RoleRepository;
@@ -38,8 +42,8 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(value = AuthControllerPath.BASE_PATH)
-public class AuthController {
+@RequestMapping(value = UserControllerPath.BASE_PATH)
+public class UserController {
   @Autowired
   AuthenticationManager authenticationManager;
 
@@ -62,7 +66,7 @@ public class AuthController {
           method = RequestMethod.POST,
           produces = MediaType.APPLICATION_JSON_VALUE,
           consumes = MediaType.APPLICATION_JSON_VALUE,
-          value = AuthControllerPath.LOGIN
+          value = UserControllerPath.LOGIN
   )
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
@@ -85,7 +89,7 @@ public class AuthController {
           method = RequestMethod.POST,
           produces = MediaType.APPLICATION_JSON_VALUE,
           consumes = MediaType.APPLICATION_JSON_VALUE,
-          value = AuthControllerPath.REGISTER
+          value = UserControllerPath.REGISTER
   )
   public ResponseEntity<?> registerUser(@Valid @RequestBody CreateUserRequest signUpRequest) {
     if (userRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -120,6 +124,7 @@ public class AuthController {
             Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(adminRole);
+            user.setStatus(UserStatus.VERIFIED);
 
             break;
           default:
@@ -137,10 +142,57 @@ public class AuthController {
   }
 
   @RequestMapping(
+          method = RequestMethod.GET,
+          produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity getAllUser() throws Exception {
+    List<User> users = this.userService.find();
+    List<GetAllUsersResponse> usersResponses = new ArrayList<>();
+
+    for (User user : users) {
+      GetAllUsersResponse usersResponse = GetAllUsersResponse.builder().build();
+      BeanUtils.copyProperties(user, usersResponse);
+      usersResponses.add(usersResponse);
+    }
+
+    return ResponseEntity.ok(
+            new ListBaseResponse<>(
+                    null,
+                    null,
+                    true,
+                    null,
+                    usersResponses,
+                    null
+            )
+    );
+  }
+
+  @RequestMapping(
+          method = RequestMethod.GET,
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          value = UserControllerPath.GET_BY_ID
+  )
+  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+  public ResponseEntity getUserById(@PathVariable String userId) throws Exception {
+    User user = this.userService.findByUserId(userId);
+    GetUserByIdResponse userResponse = GetUserByIdResponse.builder().build();
+    BeanUtils.copyProperties(user, userResponse);
+
+    return ResponseEntity.ok(new SingleBaseResponse<>(
+            null,
+            null,
+            true,
+            null,
+            userResponse
+    ));
+  }
+
+  @RequestMapping(
           method = RequestMethod.PUT,
           produces = MediaType.APPLICATION_JSON_VALUE,
           consumes = MediaType.APPLICATION_JSON_VALUE,
-          value = AuthControllerPath.UPDATE_BY_ID
+          value = UserControllerPath.UPDATE_BY_ID
   )
   @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
   public ResponseEntity updateUser(@PathVariable String userId, @Valid @RequestBody UpdateUserRequest updateUserRequest) throws Exception {
@@ -155,6 +207,7 @@ public class AuthController {
             true,
             null,
             new UpdateUserResponse(
+                    updatedUser.getId(),
                     updatedUser.getUsername(),
                     updatedUser.getEmail(),
                     updatedUser.getFullname(),
@@ -167,7 +220,7 @@ public class AuthController {
   @RequestMapping(
           method = RequestMethod.POST,
           produces = MediaType.APPLICATION_JSON_VALUE,
-          value = AuthControllerPath.LOGOUT
+          value = UserControllerPath.LOGOUT
   )
   @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
   public ResponseEntity logoutUser() {

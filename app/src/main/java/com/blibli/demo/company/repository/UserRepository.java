@@ -2,6 +2,8 @@ package com.blibli.demo.company.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import com.blibli.demo.company.entity.User;
+
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends MongoRepository<User, String> {
@@ -11,6 +13,8 @@ public interface UserRepository extends MongoRepository<User, String> {
 
 //	long deleteByUserId(Integer userId);
   User findFirstById(String userId);
+
+  List<User> findAllBy();
 
   Optional<User> findByUsername(String username);
 
