@@ -23,4 +23,9 @@ public class Role {
 
   @Field(value = Role.FIELD_NAME)
   private ERole name;
+
+  @Override
+  public String toString() {
+    return String.valueOf(name);
+  }
 }
