@@ -32,8 +32,8 @@ public class EmployeeServiceBean implements EmployeeService {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	@Autowired
-	private KafkaTemplate<String, String> kafkaTemplate;
+//	@Autowired
+//	private KafkaTemplate<String, String> kafkaTemplate;
 
 	@Value(value = "${configuration.employee.kafka-topic}")
 	private String kafkaTopic;
