@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface DisasterService {
 	List<Disaster> find(String display, String userId);
+
+	Disaster findByDisasterId(String disasterId);
 }

@@ -1,13 +1,16 @@
 package com.blibli.demo.company.controller;
 
 import com.blibli.demo.base.ListBaseResponse;
+import com.blibli.demo.base.SingleBaseResponse;
 import com.blibli.demo.company.entity.Disaster;
 import com.blibli.demo.company.model.web.GetAllDisastersResponse;
+import com.blibli.demo.company.model.web.GetDisasterByIdResponse;
 import com.blibli.demo.company.security.service.DisasterService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -44,5 +47,25 @@ public class DisasterController {
                     null
             )
     );
+  }
+
+  @RequestMapping(
+          method = RequestMethod.GET,
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          value = DisasterControllerPath.GET_BY_ID
+  )
+  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+  public ResponseEntity getDisasterById(@PathVariable String disasterId) throws Exception {
+    Disaster disaster = this.disasterService.findByDisasterId(disasterId);
+    GetDisasterByIdResponse disasterResponse = GetDisasterByIdResponse.builder().build();
+    BeanUtils.copyProperties(disaster, disasterResponse);
+
+    return ResponseEntity.ok(new SingleBaseResponse<>(
+            null,
+            null,
+            true,
+            null,
+            disasterResponse
+    ));
   }
 }

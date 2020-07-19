@@ -31,4 +31,9 @@ public class DisasterServiceBean implements DisasterService {
 
 		return disasters;
 	}
+
+	@Override
+	public Disaster findByDisasterId(String disasterId) {
+		return disasterRepository.findFirstByMarkForDeleteFalseAndId(disasterId);
+	}
 }
