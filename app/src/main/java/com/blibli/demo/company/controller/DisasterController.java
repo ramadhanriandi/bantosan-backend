@@ -1,10 +1,13 @@
 package com.blibli.demo.company.controller;
 
+import com.blibli.demo.base.BaseResponse;
 import com.blibli.demo.base.ListBaseResponse;
 import com.blibli.demo.base.SingleBaseResponse;
 import com.blibli.demo.company.entity.Disaster;
+import com.blibli.demo.company.model.command.CreateDisasterRequest;
 import com.blibli.demo.company.model.web.GetAllDisastersResponse;
 import com.blibli.demo.company.model.web.GetDisasterByIdResponse;
+import com.blibli.demo.company.model.web.ReporterResponse;
 import com.blibli.demo.company.security.service.DisasterService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,13 +31,21 @@ public class DisasterController {
           method = RequestMethod.GET,
           produces = MediaType.APPLICATION_JSON_VALUE
   )
-  public ResponseEntity getAllDisaster(@RequestParam String display, @RequestParam String userId) throws Exception {
+  public ResponseEntity getAllDisaster(
+          @RequestParam(value = "display", required = false) String display,
+          @RequestParam(value = "userId", required = false) String userId
+  ) throws Exception {
     List<Disaster> disasters = this.disasterService.find(display, userId);
     List<GetAllDisastersResponse> disastersResponses = new ArrayList<>();
 
     for (Disaster disaster : disasters) {
       GetAllDisastersResponse disastersResponse = GetAllDisastersResponse.builder().build();
       BeanUtils.copyProperties(disaster, disastersResponse);
+
+      ReporterResponse reporterResponse = ReporterResponse.builder().build();
+      BeanUtils.copyProperties(disaster.getReporter(), reporterResponse);
+      disastersResponse.setReporter(reporterResponse);
+
       disastersResponses.add(disastersResponse);
     }
 
@@ -67,5 +79,19 @@ public class DisasterController {
             null,
             disasterResponse
     ));
+  }
+
+  @RequestMapping(
+          method = RequestMethod.POST,
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          consumes = MediaType.APPLICATION_JSON_VALUE
+  )
+  @PreAuthorize("hasRole('USER')")
+  public ResponseEntity<?> createDisaster(@Valid @RequestBody CreateDisasterRequest createDisasterRequest) {
+    Disaster disaster = Disaster.builder().build();
+    BeanUtils.copyProperties(createDisasterRequest, disaster);
+    this.disasterService.create(disaster, createDisasterRequest.getReporter());
+
+    return ResponseEntity.ok(new BaseResponse(null, null, true, null));
   }
 }

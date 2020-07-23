@@ -8,4 +8,6 @@ public interface DisasterService {
 	List<Disaster> find(String display, String userId);
 
 	Disaster findByDisasterId(String disasterId);
+
+	void create(Disaster disaster, String reporterId);
 }

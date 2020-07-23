@@ -13,4 +13,6 @@ public interface DisasterRepository extends MongoRepository<Disaster, String> {
   List<Disaster> findAllByMarkForDeleteFalseAndDisplayOrderByUpdatedAtDesc(String display);
 
   List<Disaster> findAllByMarkForDeleteFalseAndReporterIdOrderByUpdatedAtDesc(String userId);
+
+  List<Disaster> findAllByMarkForDeleteFalseAndDisplayAndReporterIdOrderByUpdatedAtDesc(String display, String userId);
 }
