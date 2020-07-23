@@ -12,4 +12,6 @@ public interface DisasterService {
 	void create(Disaster disaster, String reporterId);
 
 	Disaster update(String disasterId, Disaster disaster);
+
+	boolean delete(String disasterId);
 }

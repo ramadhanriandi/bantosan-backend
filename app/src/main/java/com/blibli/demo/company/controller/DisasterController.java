@@ -125,4 +125,25 @@ public class DisasterController {
             updateDisasterResponse
     ));
   }
+
+  @RequestMapping(
+          method = RequestMethod.DELETE,
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          value = DisasterControllerPath.DELETE_BY_ID
+  )
+  @PreAuthorize("hasRole('USER')")
+  public ResponseEntity<?> deleteDisaster(@PathVariable String disasterId) {
+    boolean isDeleteSuccess = this.disasterService.delete(disasterId);
+
+    if (!isDeleteSuccess) return ResponseEntity.ok(
+            new BaseResponse(
+                    "Disaster is not found",
+                    "404",
+                    false,
+                    null
+            )
+    );
+
+    return ResponseEntity.ok(new BaseResponse(null, null, true, null));
+  }
 }
