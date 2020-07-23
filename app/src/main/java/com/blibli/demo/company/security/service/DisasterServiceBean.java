@@ -52,4 +52,19 @@ public class DisasterServiceBean implements DisasterService {
 
 		disasterRepository.save(disaster);
 	}
+
+	@Override
+	public Disaster update(String disasterId, Disaster disaster) {
+		Disaster updatedDisaster = disasterRepository.findFirstByMarkForDeleteFalseAndId(disasterId);
+
+		if (disaster.getName() != null) updatedDisaster.setName(disaster.getName());
+		if (disaster.getCategory() != null) updatedDisaster.setCategory(disaster.getCategory());
+		if (disaster.getStatus() != null) updatedDisaster.setStatus(disaster.getStatus());
+		if (disaster.getDescription() != null) updatedDisaster.setDescription(disaster.getDescription());
+		if (disaster.getLocation() != null) updatedDisaster.setLocation(disaster.getLocation());
+		if (disaster.getDisplay() != null) updatedDisaster.setDisplay(disaster.getDisplay());
+		if (disaster.getEvidence() != null) updatedDisaster.setEvidence(disaster.getEvidence());
+
+		return updatedDisaster;
+	}
 }

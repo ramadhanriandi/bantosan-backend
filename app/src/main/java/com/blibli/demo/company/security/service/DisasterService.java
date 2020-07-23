@@ -10,4 +10,6 @@ public interface DisasterService {
 	Disaster findByDisasterId(String disasterId);
 
 	void create(Disaster disaster, String reporterId);
+
+	Disaster update(String disasterId, Disaster disaster);
 }
