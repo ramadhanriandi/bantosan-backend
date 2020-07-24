@@ -1,35 +1,27 @@
 package com.blibli.demo.company.model.command;
 
-import com.blibli.demo.company.entity.Bank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateFundraisingRequest {
-  @NotBlank
-  private String title;
+public class CreateDonationRequest {
+  @NotNull
+  private Double nominal;
 
   @NotBlank
-  private String description;
+  private String donatur;
 
   @NotNull
-  private Integer day;
-
-  @NotNull
-  private Double target;
-
-  @NotEmpty
-  private Bank[] banks;
+  private Integer bank;
 
   @NotBlank
-  private String organizer;
+  private String fundraising;
 }
