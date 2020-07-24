@@ -6,30 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateFundraisingRequest {
-  @NotBlank
+public class UpdateFundraisingRequest {
   private String title;
-
-  @NotBlank
   private String description;
-
-  @NotNull
-  private Integer day;
-
-  @NotNull
+  private Integer days;
   private Double target;
-
-  @NotEmpty
+  private String status;
   private Bank[] banks;
-
-  @NotBlank
-  private String organizer;
 }
