@@ -1,5 +1,7 @@
 package com.blibli.demo.company.security.service;
 
+import com.blibli.demo.company.constant.DisasterDisplay;
+import com.blibli.demo.company.constant.DisasterStatus;
 import com.blibli.demo.company.entity.Disaster;
 import com.blibli.demo.company.entity.User;
 import com.blibli.demo.company.repository.DisasterRepository;
@@ -47,7 +49,8 @@ public class DisasterServiceBean implements DisasterService {
 	@Override
 	public void create(Disaster disaster, String reportedId) {
 		User reporter = userRepository.findFirstById(reportedId);
-		disaster.setDisplay("Show");
+		disaster.setDisplay(DisasterDisplay.SHOW);
+		disaster.setStatus(DisasterStatus.PENDING);
 		disaster.setReporter(reporter);
 
 		disasterRepository.save(disaster);
