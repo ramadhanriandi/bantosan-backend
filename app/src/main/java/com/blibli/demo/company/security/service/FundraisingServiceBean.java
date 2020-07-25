@@ -55,4 +55,16 @@ public class FundraisingServiceBean implements FundraisingService {
 
 		return updatedFundraising;
 	}
+
+	@Override
+	public boolean delete(String fundraisingId) {
+		Fundraising deletedFundraising = fundraisingRepository.findFirstByMarkForDeleteFalseAndId(fundraisingId);
+	
+		if (deletedFundraising == null) return false;
+
+		deletedFundraising.setMarkForDelete(true);
+		fundraisingRepository.save(deletedFundraising);
+
+		return true;
+	}
 }
