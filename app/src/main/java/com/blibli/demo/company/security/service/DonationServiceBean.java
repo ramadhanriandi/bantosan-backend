@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class DonationServiceBean implements DonationService {
@@ -22,6 +24,26 @@ public class DonationServiceBean implements DonationService {
 
 	@Autowired
 	private FundraisingRepository fundraisingRepository;
+
+	@Override
+	public List<Donation> find(String userId, String fundraisingId) {
+		List<Donation> donations = null;
+
+		if (userId == null && fundraisingId == null) {
+			donations = donationRepository.findAllByOrderByUpdatedAtDesc();
+		}
+		if (userId != null && fundraisingId == null) {
+			donations = donationRepository.findAllByDonaturIdOrderByUpdatedAtDesc(userId);
+		}
+		if (userId == null && fundraisingId != null) {
+			donations = donationRepository.findAllByFundraisingIdOrderByUpdatedAtDesc(fundraisingId);
+		}
+		if (userId != null && fundraisingId != null) {
+			donations = donationRepository.findAllByDonaturIdAndFundraisingIdOrderByUpdatedAtDesc(userId, fundraisingId);
+		}
+
+		return donations;
+	}
 
 	@Override
 	public void create(Donation donation, String donaturId, String fundraisingId) {
