@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class UpdateFundraisingRequest {
   private String title;
   private String description;
-  private Integer days;
+  private Integer day;
   private Double target;
   private String status;
   private Bank[] banks;

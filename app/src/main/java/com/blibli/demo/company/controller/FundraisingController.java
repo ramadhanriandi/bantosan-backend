@@ -5,6 +5,7 @@ import com.blibli.demo.base.SingleBaseResponse;
 import com.blibli.demo.company.entity.Fundraising;
 import com.blibli.demo.company.model.command.CreateFundraisingRequest;
 import com.blibli.demo.company.model.command.UpdateFundraisingRequest;
+import com.blibli.demo.company.model.web.UpdateFundraisingResponse;
 import com.blibli.demo.company.security.service.FundraisingService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,22 +51,17 @@ public class FundraisingController {
     Fundraising fundraising = Fundraising.builder().build();
     BeanUtils.copyProperties(updateFundraisingRequest, fundraising);
 
-    Fundraising updatedDisaster = this.fundraisingService.update(fundraisingId, fundraising);
+    Fundraising updatedFundraising = this.fundraisingService.update(fundraisingId, fundraising);
 
-//    UpdateDisasterResponse updateDisasterResponse = UpdateDisasterResponse.builder().build();
-//    BeanUtils.copyProperties(updatedDisaster, updateDisasterResponse);
-//
-//    ReporterResponse reporterResponse = ReporterResponse.builder().build();
-//    BeanUtils.copyProperties(updatedDisaster.getReporter(), reporterResponse);
-//    updateDisasterResponse.setReporter(reporterResponse);
+    UpdateFundraisingResponse updateFundraisingResponse = UpdateFundraisingResponse.builder().build();
+    BeanUtils.copyProperties(updatedFundraising, updateFundraisingResponse);
 
     return ResponseEntity.ok(new SingleBaseResponse<>(
             null,
             null,
             true,
             null,
-            null
-//            updateDisasterResponse
+            updateFundraisingResponse
     ));
   }
 }

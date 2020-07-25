@@ -41,7 +41,7 @@ public class FundraisingServiceBean implements FundraisingService {
 		if (fundraising.getStatus() != null) updatedFundraising.setStatus(fundraising.getStatus());
 		if (fundraising.getBanks() != null) updatedFundraising.setBanks(fundraising.getBanks());
 
-		if (fundraising.getStatus() == FundraisingStatus.ONGOING && updatedFundraising.getStartDate() == null) {
+		if (fundraising.getStatus().equals(FundraisingStatus.ONGOING) && updatedFundraising.getStartDate() == null) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(new Date());
 			cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) + (updatedFundraising.getDay()-1));
