@@ -1,7 +1,6 @@
 package com.blibli.demo.company.security.service;
 
 import com.blibli.demo.company.constant.DonationStatus;
-import com.blibli.demo.company.constant.FundraisingStatus;
 import com.blibli.demo.company.entity.Donation;
 import com.blibli.demo.company.entity.Fundraising;
 import com.blibli.demo.company.entity.User;
@@ -33,5 +32,16 @@ public class DonationServiceBean implements DonationService {
 		donation.setFundraising(fundraising);
 
 		donationRepository.save(donation);
+	}
+
+	@Override
+	public Donation update(String donationId, Donation donation) {
+		Donation updatedDonation = donationRepository.findFirstById(donationId);
+
+		if (donation.getStatus() != null) updatedDonation.setStatus(donation.getStatus());
+
+		donationRepository.save(updatedDonation);
+
+		return updatedDonation;
 	}
 }
