@@ -1,8 +1,9 @@
 package com.blibli.demo.company.security.service;
 
+import com.blibli.demo.company.constant.DonationStatus;
 import com.blibli.demo.company.constant.FundraisingStatus;
-import com.blibli.demo.company.entity.Fundraising;
-import com.blibli.demo.company.entity.User;
+import com.blibli.demo.company.entity.*;
+import com.blibli.demo.company.repository.DonationRepository;
 import com.blibli.demo.company.repository.FundraisingRepository;
 import com.blibli.demo.company.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -20,6 +22,35 @@ public class FundraisingServiceBean implements FundraisingService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private DonationRepository donationRepository;
+
+	@Override
+	public List<Fundraising> find(Integer limit, String status, String userId) {
+		List<Fundraising> fundraisings = null;
+
+		if (limit == null && status == null && userId == null) {
+			fundraisings = fundraisingRepository.findAllByMarkForDeleteFalseOrderByUpdatedAtDesc();
+		} else {
+			if (status != null) {
+				if (limit == null) {
+					fundraisings = fundraisingRepository.findAllByMarkForDeleteFalseAndStatusOrderByUpdatedAtDesc(status);
+				} else {
+					fundraisings = fundraisingRepository.findAllByMarkForDeleteFalseOrderByUpdatedAtDesc().subList(0, limit);
+				}
+			} else if (userId != null) {
+				fundraisings = fundraisingRepository.findAllByMarkForDeleteFalseAndOrganizerIdOrderByUpdatedAtDesc(userId);
+			}
+		}
+
+		return fundraisings;
+	}
+
+	@Override
+	public Fundraising findByFundraisingId(String fundraisingId) {
+		return fundraisingRepository.findFirstByMarkForDeleteFalseAndId(fundraisingId);
+	}
 
 	@Override
 	public void create(Fundraising fundraising, String organizerId) {
@@ -66,5 +97,53 @@ public class FundraisingServiceBean implements FundraisingService {
 		fundraisingRepository.save(deletedFundraising);
 
 		return true;
+	}
+
+	@Override
+	public Double findTotalDonation(String fundraisingId) {
+		List<Donation> donations = donationRepository.findAllByFundraisingIdAndStatusOrderByUpdatedAtDesc(
+						fundraisingId, DonationStatus.VERIFIED
+		);
+
+		Double totalDonation = 0.0;
+
+		for (Donation donation : donations) {
+			totalDonation += donation.getNominal();
+		}
+
+		return totalDonation;
+	}
+
+	@Override
+	public DonationBank[] findDonationByBank(String fundraisingId) {
+		List<Donation> donations = donationRepository.findAllByFundraisingIdAndStatusOrderByUpdatedAtDesc(
+						fundraisingId, DonationStatus.VERIFIED
+		);
+		Fundraising fundraising = fundraisingRepository.findFirstByMarkForDeleteFalseAndId(fundraisingId);
+
+		Bank[] banks = fundraising.getBanks();
+		DonationBank[] donationByBank = new DonationBank[banks.length];
+
+		if (banks.length > 0) {
+			for (int i = 0; i < banks.length; i++) {
+				donationByBank[i] = new DonationBank(banks[i].getBankId(), 0.0);
+			}
+
+			for (Donation donation : donations) {
+				DonationBank donationBank = donationByBank[donation.getBank()];
+				donationByBank[donation.getBank()].setTotal(
+								donationBank.getTotal() + donation.getNominal()
+				);
+			}
+		}
+
+		return donationByBank;
+	}
+
+	@Override
+	public Integer findDonaturs(String fundraisingId) {
+		return donationRepository.findAllByFundraisingIdAndStatusOrderByUpdatedAtDesc(
+						fundraisingId, DonationStatus.VERIFIED
+		).size();
 	}
 }
