@@ -1,12 +1,17 @@
 package com.blibli.demo.company.controller;
 
 import com.blibli.demo.base.BaseResponse;
+import com.blibli.demo.base.ListBaseResponse;
 import com.blibli.demo.base.SingleBaseResponse;
 import com.blibli.demo.company.entity.Fundraising;
 import com.blibli.demo.company.model.command.CreateFundraisingRequest;
 import com.blibli.demo.company.model.command.UpdateFundraisingRequest;
+import com.blibli.demo.company.model.web.GetAllFundraisingsResponse;
+import com.blibli.demo.company.model.web.OrganizerResponse;
 import com.blibli.demo.company.model.web.UpdateFundraisingResponse;
+import com.blibli.demo.company.security.service.DonationService;
 import com.blibli.demo.company.security.service.FundraisingService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -15,13 +20,53 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
+@Slf4j
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(value = FundraisingControllerPath.BASE_PATH)
 public class FundraisingController {
   @Autowired
   private FundraisingService fundraisingService;
+
+  @RequestMapping(
+          method = RequestMethod.GET,
+          produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity getAllFundraising(
+          @RequestParam(value = "limit", required = false) Integer limit,
+          @RequestParam(value = "status", required = false) String status,
+          @RequestParam(value = "userId", required = false) String userId
+  ) throws Exception {
+    List<Fundraising> fundraisings = this.fundraisingService.find(limit, status, userId);
+    List<GetAllFundraisingsResponse> fundraisingsResponses = new ArrayList<>();
+
+    for (Fundraising fundraising : fundraisings) {
+      GetAllFundraisingsResponse fundraisingsResponse = GetAllFundraisingsResponse.builder().build();
+      BeanUtils.copyProperties(fundraising, fundraisingsResponse);
+
+      OrganizerResponse organizerResponse = OrganizerResponse.builder().build();
+      BeanUtils.copyProperties(fundraising.getOrganizer(), organizerResponse);
+
+      fundraisingsResponse.setOrganizer(organizerResponse);
+      fundraisingsResponse.setTotalDonation(this.fundraisingService.findTotalDonation(fundraising.getId()));
+
+      fundraisingsResponses.add(fundraisingsResponse);
+    }
+
+    return ResponseEntity.ok(
+            new ListBaseResponse<>(
+                    null,
+                    null,
+                    true,
+                    null,
+                    fundraisingsResponses,
+                    null
+            )
+    );
+  }
 
   @RequestMapping(
           method = RequestMethod.POST,

@@ -15,4 +15,6 @@ public interface DonationRepository extends MongoRepository<Donation, String> {
   List<Donation> findAllByFundraisingIdOrderByUpdatedAtDesc(String fundraisingId);
 
   List<Donation> findAllByDonaturIdAndFundraisingIdOrderByUpdatedAtDesc(String userId, String fundraisingId);
+
+  List<Donation> findAllByFundraisingIdAndStatusOrderByUpdatedAtDesc(String fundraisingId, String status);
 }
