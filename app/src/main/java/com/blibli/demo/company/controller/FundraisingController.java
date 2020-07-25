@@ -64,4 +64,25 @@ public class FundraisingController {
             updateFundraisingResponse
     ));
   }
+
+  @RequestMapping(
+          method = RequestMethod.DELETE,
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          value = FundraisingControllerPath.DELETE_BY_ID
+  )
+  @PreAuthorize("hasRole('USER')")
+  public ResponseEntity<?> deleteFundraising(@PathVariable String fundraisingId) {
+    boolean isDeleteSuccess = this.fundraisingService.delete(fundraisingId);
+
+    if (!isDeleteSuccess) return ResponseEntity.ok(
+            new BaseResponse(
+                    "Fundraising is not found",
+                    "404",
+                    false,
+                    null
+            )
+    );
+
+    return ResponseEntity.ok(new BaseResponse(null, null, true, null));
+  }
 }

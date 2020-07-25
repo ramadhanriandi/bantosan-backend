@@ -6,4 +6,6 @@ public interface FundraisingService {
 	void create(Fundraising fundraising, String organizerId);
 
 	Fundraising update(String fundraisingId, Fundraising fundraising);
+
+	boolean delete(String fundraisingId);
 }
