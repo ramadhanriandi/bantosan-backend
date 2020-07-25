@@ -7,6 +7,7 @@ import com.blibli.demo.company.entity.Fundraising;
 import com.blibli.demo.company.model.command.CreateFundraisingRequest;
 import com.blibli.demo.company.model.command.UpdateFundraisingRequest;
 import com.blibli.demo.company.model.web.GetAllFundraisingsResponse;
+import com.blibli.demo.company.model.web.GetFundraisingByIdResponse;
 import com.blibli.demo.company.model.web.OrganizerResponse;
 import com.blibli.demo.company.model.web.UpdateFundraisingResponse;
 import com.blibli.demo.company.security.service.DonationService;
@@ -49,8 +50,8 @@ public class FundraisingController {
 
       OrganizerResponse organizerResponse = OrganizerResponse.builder().build();
       BeanUtils.copyProperties(fundraising.getOrganizer(), organizerResponse);
-
       fundraisingsResponse.setOrganizer(organizerResponse);
+
       fundraisingsResponse.setTotalDonation(this.fundraisingService.findTotalDonation(fundraising.getId()));
 
       fundraisingsResponses.add(fundraisingsResponse);
@@ -66,6 +67,34 @@ public class FundraisingController {
                     null
             )
     );
+  }
+
+  @RequestMapping(
+          method = RequestMethod.GET,
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          value = FundraisingControllerPath.GET_BY_ID
+  )
+  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+  public ResponseEntity getFundraisingById(@PathVariable String fundraisingId) throws Exception {
+    Fundraising fundraising = this.fundraisingService.findByFundraisingId(fundraisingId);
+    GetFundraisingByIdResponse fundraisingResponse = GetFundraisingByIdResponse.builder().build();
+    BeanUtils.copyProperties(fundraising, fundraisingResponse);
+
+    OrganizerResponse organizerResponse = OrganizerResponse.builder().build();
+    BeanUtils.copyProperties(fundraising.getOrganizer(), organizerResponse);
+    fundraisingResponse.setOrganizer(organizerResponse);
+
+    fundraisingResponse.setTotalDonation(this.fundraisingService.findTotalDonation(fundraising.getId()));
+    fundraisingResponse.setDonationByBank(this.fundraisingService.findDonationByBank(fundraising.getId()));
+    fundraisingResponse.setDonaturs(this.fundraisingService.findDonaturs(fundraising.getId()));
+
+    return ResponseEntity.ok(new SingleBaseResponse<>(
+            null,
+            null,
+            true,
+            null,
+            fundraisingResponse
+    ));
   }
 
   @RequestMapping(

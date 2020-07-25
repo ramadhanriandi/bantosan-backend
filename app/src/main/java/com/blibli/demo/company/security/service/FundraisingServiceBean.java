@@ -2,9 +2,7 @@ package com.blibli.demo.company.security.service;
 
 import com.blibli.demo.company.constant.DonationStatus;
 import com.blibli.demo.company.constant.FundraisingStatus;
-import com.blibli.demo.company.entity.Donation;
-import com.blibli.demo.company.entity.Fundraising;
-import com.blibli.demo.company.entity.User;
+import com.blibli.demo.company.entity.*;
 import com.blibli.demo.company.repository.DonationRepository;
 import com.blibli.demo.company.repository.FundraisingRepository;
 import com.blibli.demo.company.repository.UserRepository;
@@ -47,6 +45,11 @@ public class FundraisingServiceBean implements FundraisingService {
 		}
 
 		return fundraisings;
+	}
+
+	@Override
+	public Fundraising findByFundraisingId(String fundraisingId) {
+		return fundraisingRepository.findFirstByMarkForDeleteFalseAndId(fundraisingId);
 	}
 
 	@Override
@@ -109,5 +112,38 @@ public class FundraisingServiceBean implements FundraisingService {
 		}
 
 		return totalDonation;
+	}
+
+	@Override
+	public DonationBank[] findDonationByBank(String fundraisingId) {
+		List<Donation> donations = donationRepository.findAllByFundraisingIdAndStatusOrderByUpdatedAtDesc(
+						fundraisingId, DonationStatus.VERIFIED
+		);
+		Fundraising fundraising = fundraisingRepository.findFirstByMarkForDeleteFalseAndId(fundraisingId);
+
+		Bank[] banks = fundraising.getBanks();
+		DonationBank[] donationByBank = new DonationBank[banks.length];
+
+		if (banks.length > 0) {
+			for (int i = 0; i < banks.length; i++) {
+				donationByBank[i] = new DonationBank(banks[i].getBankId(), 0.0);
+			}
+
+			for (Donation donation : donations) {
+				DonationBank donationBank = donationByBank[donation.getBank()];
+				donationByBank[donation.getBank()].setTotal(
+								donationBank.getTotal() + donation.getNominal()
+				);
+			}
+		}
+
+		return donationByBank;
+	}
+
+	@Override
+	public Integer findDonaturs(String fundraisingId) {
+		return donationRepository.findAllByFundraisingIdAndStatusOrderByUpdatedAtDesc(
+						fundraisingId, DonationStatus.VERIFIED
+		).size();
 	}
 }
