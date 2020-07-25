@@ -1,6 +1,5 @@
 package com.blibli.demo.company.model.web;
 
-import com.blibli.demo.company.entity.Location;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,14 +11,11 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateDisasterResponse {
+public class GetAllDonationsResponse {
   private String id;
-  private String name;
-  private String category;
+  private Double nominal;
   private String status;
-  private String description;
-  private String evidence;
-  private Location location;
-  private String display;
-  private Date updatedAt;
+  private Date createdAt;
+  private DonaturResponse donatur;
+  private FundraisingResponse fundraising;
 }
