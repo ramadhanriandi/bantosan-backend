@@ -113,10 +113,6 @@ public class DisasterController {
     UpdateDisasterResponse updateDisasterResponse = UpdateDisasterResponse.builder().build();
     BeanUtils.copyProperties(updatedDisaster, updateDisasterResponse);
 
-    ReporterResponse reporterResponse = ReporterResponse.builder().build();
-    BeanUtils.copyProperties(updatedDisaster.getReporter(), reporterResponse);
-    updateDisasterResponse.setReporter(reporterResponse);
-
     return ResponseEntity.ok(new SingleBaseResponse<>(
             null,
             null,

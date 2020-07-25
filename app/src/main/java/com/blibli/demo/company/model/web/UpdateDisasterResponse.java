@@ -21,7 +21,5 @@ public class UpdateDisasterResponse {
   private String evidence;
   private Location location;
   private String display;
-  private Date createdAt;
   private Date updatedAt;
-  private ReporterResponse reporter;
 }
