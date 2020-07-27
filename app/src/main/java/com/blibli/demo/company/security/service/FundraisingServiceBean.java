@@ -37,7 +37,7 @@ public class FundraisingServiceBean implements FundraisingService {
 				if (limit == null) {
 					fundraisings = fundraisingRepository.findAllByMarkForDeleteFalseAndStatusOrderByUpdatedAtDesc(status);
 				} else {
-					List<Fundraising> rawFundraisings = fundraisingRepository.findAllByMarkForDeleteFalseOrderByUpdatedAtDesc();
+					List<Fundraising> rawFundraisings = fundraisingRepository.findAllByMarkForDeleteFalseAndStatusOrderByUpdatedAtDesc(status);
 					if (rawFundraisings.size() > limit) {
 						fundraisings = rawFundraisings.subList(0, limit);
 					} else {
