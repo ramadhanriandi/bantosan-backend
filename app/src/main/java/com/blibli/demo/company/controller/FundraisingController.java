@@ -10,7 +10,6 @@ import com.blibli.demo.company.model.web.GetAllFundraisingsResponse;
 import com.blibli.demo.company.model.web.GetFundraisingByIdResponse;
 import com.blibli.demo.company.model.web.OrganizerResponse;
 import com.blibli.demo.company.model.web.UpdateFundraisingResponse;
-import com.blibli.demo.company.security.service.DonationService;
 import com.blibli.demo.company.security.service.FundraisingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
