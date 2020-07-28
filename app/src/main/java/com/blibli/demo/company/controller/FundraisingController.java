@@ -104,9 +104,10 @@ public class FundraisingController {
   public ResponseEntity<?> createFundraising(@Valid @RequestBody CreateFundraisingRequest createFundraisingRequest) {
     Fundraising fundraising = Fundraising.builder().build();
     BeanUtils.copyProperties(createFundraisingRequest, fundraising);
-    this.fundraisingService.create(fundraising, createFundraisingRequest.getOrganizer());
-
-    return ResponseEntity.ok(new BaseResponse(null, null, true, null));
+    if (this.fundraisingService.create(fundraising, createFundraisingRequest.getOrganizer())) {
+      return ResponseEntity.ok(new BaseResponse(null, null, true, null));
+    }
+    return ResponseEntity.ok(new BaseResponse("Your account hasn't been verified", null, false, null));
   }
 
   @RequestMapping(

@@ -10,7 +10,7 @@ public interface FundraisingService {
 
 	Fundraising findByFundraisingId(String fundraisingId);
 
-	void create(Fundraising fundraising, String organizerId);
+	boolean create(Fundraising fundraising, String organizerId);
 
 	Fundraising update(String fundraisingId, Fundraising fundraising);
 
