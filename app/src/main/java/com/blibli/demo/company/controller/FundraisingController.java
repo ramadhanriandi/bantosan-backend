@@ -73,7 +73,6 @@ public class FundraisingController {
           produces = MediaType.APPLICATION_JSON_VALUE,
           value = FundraisingControllerPath.GET_BY_ID
   )
-  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
   public ResponseEntity getFundraisingById(@PathVariable String fundraisingId) throws Exception {
     Fundraising fundraising = this.fundraisingService.findByFundraisingId(fundraisingId);
     GetFundraisingByIdResponse fundraisingResponse = GetFundraisingByIdResponse.builder().build();
