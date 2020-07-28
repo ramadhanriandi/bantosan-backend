@@ -2,6 +2,7 @@ package com.blibli.demo.company.security.service;
 
 import com.blibli.demo.company.constant.DonationStatus;
 import com.blibli.demo.company.constant.FundraisingStatus;
+import com.blibli.demo.company.constant.UserStatus;
 import com.blibli.demo.company.entity.*;
 import com.blibli.demo.company.repository.DonationRepository;
 import com.blibli.demo.company.repository.FundraisingRepository;
@@ -58,12 +59,17 @@ public class FundraisingServiceBean implements FundraisingService {
 	}
 
 	@Override
-	public void create(Fundraising fundraising, String organizerId) {
+	public boolean create(Fundraising fundraising, String organizerId) {
 		User organizer = userRepository.findFirstById(organizerId);
+		if (!organizer.getStatus().equals(UserStatus.VERIFIED)) {
+			return false;
+		}
+
 		fundraising.setStatus(FundraisingStatus.PENDING);
 		fundraising.setOrganizer(organizer);
-
 		fundraisingRepository.save(fundraising);
+
+		return true;
 	}
 
 	@Override
