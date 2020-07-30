@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,4 +18,5 @@ public class GetUserByIdResponse {
   private String fullname;
   private String phone;
   private String status;
+  private Date updatedAt;
 }
