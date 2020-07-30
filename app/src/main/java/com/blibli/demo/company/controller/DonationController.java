@@ -89,7 +89,7 @@ public class DonationController {
           consumes = MediaType.APPLICATION_JSON_VALUE,
           value = DonationControllerPath.UPDATE_BY_ID
   )
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('USER')")
   public ResponseEntity<?> updateDonation(
           @PathVariable String donationId,
           @Valid @RequestBody UpdateDonationRequest updateDonationRequest
