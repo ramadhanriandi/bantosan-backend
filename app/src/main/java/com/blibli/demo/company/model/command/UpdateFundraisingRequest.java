@@ -17,4 +17,5 @@ public class UpdateFundraisingRequest {
   private Double target;
   private String status;
   private Bank[] banks;
+  private String image;
 }

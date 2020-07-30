@@ -21,4 +21,5 @@ public class GetAllFundraisingsResponse {
   private Date createdAt;
   private OrganizerResponse organizer;
   private Double totalDonation;
+  private String image;
 }

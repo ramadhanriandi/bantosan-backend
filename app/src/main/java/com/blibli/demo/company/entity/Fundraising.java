@@ -22,6 +22,7 @@ public class Fundraising extends MongoBaseEntity {
 
   public static final String FIELD_TITLE = "title";
   public static final String FIELD_DESCRIPTION = "description";
+  public static final String FIELD_IMAGE = "image";
   public static final String FIELD_DAY = "day";
   public static final String FIELD_TARGET = "target";
   public static final String FIELD_STATUS = "status";
@@ -35,6 +36,9 @@ public class Fundraising extends MongoBaseEntity {
 
   @Field(value = Fundraising.FIELD_DESCRIPTION)
   private String description;
+
+  @Field(value = Fundraising.FIELD_IMAGE)
+  private String image;
 
   @Field(value = Fundraising.FIELD_DAY)
   private Integer day;

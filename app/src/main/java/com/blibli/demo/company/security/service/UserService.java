@@ -13,6 +13,4 @@ public interface UserService {
 	User findByUserId(String userId);
 
 	User update(String userId, User user) throws Exception;
-
-//	Flux<User> bulkInsert(int total);
 }

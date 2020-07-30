@@ -24,4 +24,7 @@ public class CreateDonationRequest {
 
   @NotBlank
   private String fundraising;
+
+  @NotBlank
+  private String proof;
 }

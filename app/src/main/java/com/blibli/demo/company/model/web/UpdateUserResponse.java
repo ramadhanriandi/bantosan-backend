@@ -16,4 +16,6 @@ public class UpdateUserResponse {
   private String fullname;
   private String phone;
   private String status;
+  private String avatar;
+  private String identity;
 }

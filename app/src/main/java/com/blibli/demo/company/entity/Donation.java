@@ -19,6 +19,7 @@ public class Donation extends MongoBaseEntity {
   public static final String COLLECTION_NAME = "donations";
 
   public static final String FIELD_NOMINAL = "nominal";
+  public static final String FIELD_PROOF = "proof";
   public static final String FIELD_STATUS = "status";
   public static final String FIELD_DONATUR = "donatur";
   public static final String FIELD_BANK = "bank";
@@ -26,6 +27,9 @@ public class Donation extends MongoBaseEntity {
 
   @Field(value = Donation.FIELD_NOMINAL)
   private Double nominal;
+
+  @Field(value = Donation.FIELD_PROOF)
+  private String proof;
 
   @Field(value = Donation.FIELD_STATUS)
   private String status;

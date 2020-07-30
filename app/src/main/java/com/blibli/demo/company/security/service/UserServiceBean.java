@@ -16,12 +16,8 @@ import java.util.List;
 @Service
 public class UserServiceBean implements UserService {
 
-//	public final int THREAD_NUMBER = 5;
-
 	@Autowired
 	private UserRepository userRepository;
-
-//	private ExecutorService executorService = Executors.newFixedThreadPool(5);
 
 	@Autowired
 	PasswordEncoder encoder;
@@ -60,32 +56,11 @@ public class UserServiceBean implements UserService {
 		if (user.getFullname() != null) updatedUser.setFullname(user.getFullname());
 		if (user.getPhone() != null) updatedUser.setPhone(user.getPhone());
 		if (user.getStatus() != null) updatedUser.setStatus(user.getStatus());
+		if (user.getAvatar() != null) updatedUser.setAvatar(user.getAvatar());
+		if (user.getIdentity() != null) updatedUser.setIdentity(user.getIdentity());
 
 		userRepository.save(updatedUser);
 
 		return updatedUser;
 	}
-
-//	@Override
-//	public Flux<User> bulkInsert(int total) {
-//		return createFlux(total)
-//						.map(integer -> newUser())
-//						.flatMap(user -> userRepository.save(user))
-//						.doOnNext(user -> log.debug("Success insert user id = {}", user.getUserId()))
-//						.doOnComplete(() -> log.debug("Success insert total {} users", total));
-//	}
-
-//	private Flux<Integer> createFlux(int total) {
-//		return Flux.range(1, total);
-//	}
-//
-//	private User newUser() {
-//		return User.builder()
-//								.userId(1)
-//								.name("User")
-//								.address("Address")
-//								.birthdate(1)
-//								.gender("M")
-//								.build();
-//	}
 }
