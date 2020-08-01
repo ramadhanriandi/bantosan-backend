@@ -24,4 +24,5 @@ public class UpdateFundraisingResponse {
   private Bank[] banks;
   private Date createdAt;
   private Date updatedAt;
+  private String image;
 }

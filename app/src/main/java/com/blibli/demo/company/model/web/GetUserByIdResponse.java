@@ -19,4 +19,6 @@ public class GetUserByIdResponse {
   private String phone;
   private String status;
   private Date updatedAt;
+  private String avatar;
+  private String identity;
 }

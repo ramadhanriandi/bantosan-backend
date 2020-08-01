@@ -212,7 +212,9 @@ public class UserController {
                     updatedUser.getEmail(),
                     updatedUser.getFullname(),
                     updatedUser.getPhone(),
-                    updatedUser.getStatus()
+                    updatedUser.getStatus(),
+                    updatedUser.getAvatar(),
+                    updatedUser.getIdentity()
             )
     ));
   }

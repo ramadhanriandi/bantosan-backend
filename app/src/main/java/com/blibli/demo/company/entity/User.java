@@ -28,6 +28,8 @@ public class User extends MongoBaseEntity {
   public static final String FIELD_PHONE = "phone";
   public static final String FIELD_STATUS = "status";
   public static final String FIELD_ROLES = "roles";
+  public static final String FIELD_AVATAR = "avatar";
+  public static final String FIELD_IDENTITY = "identity";
 
   @Field(value = User.FIELD_USERNAME)
   private String username;
@@ -50,6 +52,12 @@ public class User extends MongoBaseEntity {
   @Field(value = User.FIELD_ROLES)
   @DBRef
   private Set<Role> roles = new HashSet<>();
+
+  @Field(value = User.FIELD_AVATAR)
+  private String avatar;
+
+  @Field(value = User.FIELD_IDENTITY)
+  private String identity;
 
   public User(String username, String email, String password, String status) {
     this.username = username;

@@ -18,4 +18,5 @@ public class GetAllDonationsResponse {
   private Date createdAt;
   private DonaturResponse donatur;
   private FundraisingResponse fundraising;
+  private String proof;
 }

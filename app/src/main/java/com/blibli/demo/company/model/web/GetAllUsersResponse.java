@@ -13,4 +13,5 @@ public class GetAllUsersResponse {
   private String id;
   private String username;
   private String status;
+  private String identity;
 }

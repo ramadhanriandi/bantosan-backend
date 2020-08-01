@@ -26,4 +26,5 @@ public class GetFundraisingByIdResponse {
   private Double totalDonation;
   private DonationBank[] donationByBank;
   private Integer donaturs;
+  private String image;
 }

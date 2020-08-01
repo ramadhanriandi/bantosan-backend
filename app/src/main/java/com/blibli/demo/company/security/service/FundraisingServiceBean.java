@@ -82,6 +82,7 @@ public class FundraisingServiceBean implements FundraisingService {
 		if (fundraising.getTarget() != null) updatedFundraising.setTarget(fundraising.getTarget());
 		if (fundraising.getStatus() != null) updatedFundraising.setStatus(fundraising.getStatus());
 		if (fundraising.getBanks() != null) updatedFundraising.setBanks(fundraising.getBanks());
+		if (fundraising.getImage() != null) updatedFundraising.setImage(fundraising.getImage());
 
 		if (fundraising.getStatus() != null
 						&& fundraising.getStatus().equals(FundraisingStatus.ONGOING)

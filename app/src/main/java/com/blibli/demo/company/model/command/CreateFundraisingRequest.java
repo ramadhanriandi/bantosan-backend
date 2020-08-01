@@ -32,4 +32,7 @@ public class CreateFundraisingRequest {
 
   @NotBlank
   private String organizer;
+
+  @NotBlank
+  private String image;
 }
