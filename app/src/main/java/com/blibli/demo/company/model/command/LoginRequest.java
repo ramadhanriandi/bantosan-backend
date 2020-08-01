@@ -1,29 +1,23 @@
 package com.blibli.demo.company.model.command;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.Set;
-import javax.validation.constraints.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateUserRequest {
+public class LoginRequest {
   @NotBlank
   @Size(min = 3, max = 20)
   private String username;
 
   @NotBlank
-  @Size(max = 50)
-  @Email
-  private String email;
-
-  private Set<String> roles;
-
-  @NotBlank
-  @Size(min = 6, max = 40)
+  @Size(max = 120)
   private String password;
 }

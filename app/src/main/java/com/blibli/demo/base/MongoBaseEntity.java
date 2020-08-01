@@ -48,7 +48,7 @@ public class MongoBaseEntity implements Serializable {
 
 	@CreatedDate
 	@Field(value = MongoBaseEntity.FIELD_CREATED_DATE)
-	private Date createdDate;
+	private Date createdAt;
 
 	@LastModifiedBy
 	@Field(value = MongoBaseEntity.FIELD_UPDATED_BY)
@@ -56,7 +56,7 @@ public class MongoBaseEntity implements Serializable {
 
 	@LastModifiedDate
 	@Field(value = MongoBaseEntity.FIELD_UPDATED_DATE)
-	private Date updatedDate;
+	private Date updatedAt;
 
 	@Field(value = MongoBaseEntity.FIELD_STORE_ID)
 	private String storeId;

@@ -5,8 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Document(collection = User.COLLECTION_NAME)
 @Data
@@ -15,26 +19,50 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @AllArgsConstructor
 public class User extends MongoBaseEntity {
 
-	public static final String COLLECTION_NAME = "users";
+  public static final String COLLECTION_NAME = "users";
 
-	public static final String FIELD_USER_ID = "userId";
-	public static final String FIELD_NAME = "name";
-	public static final String FIELD_BIRTHDATE = "birthdate";
-	public static final String FIELD_ADDRESS = "address";
-	public static final String FIELD_GENDER = "gender";
+  public static final String FIELD_USERNAME = "username";
+  public static final String FIELD_EMAIL = "email";
+  public static final String FIELD_PASSWORD = "password";
+  public static final String FIELD_FULLNAME = "fullname";
+  public static final String FIELD_PHONE = "phone";
+  public static final String FIELD_STATUS = "status";
+  public static final String FIELD_ROLES = "roles";
+  public static final String FIELD_AVATAR = "avatar";
+  public static final String FIELD_IDENTITY = "identity";
 
-	@Field(value = User.FIELD_USER_ID)
-	private Integer userId;
+  @Field(value = User.FIELD_USERNAME)
+  private String username;
 
-	@Field(value = User.FIELD_NAME)
-	private String name;
+  @Field(value = User.FIELD_EMAIL)
+  private String email;
 
-	@Field(value = User.FIELD_BIRTHDATE)
-	private long birthdate;
+  @Field(value = User.FIELD_PASSWORD)
+  private String password;
 
-	@Field(value = User.FIELD_ADDRESS)
-	private String address;
+  @Field(value = User.FIELD_FULLNAME)
+  private String fullname;
 
-	@Field(value = User.FIELD_GENDER)
-	private String gender;
+  @Field(value = User.FIELD_PHONE)
+  private String phone;
+
+  @Field(value = User.FIELD_STATUS)
+  private String status;
+
+  @Field(value = User.FIELD_ROLES)
+  @DBRef
+  private Set<Role> roles = new HashSet<>();
+
+  @Field(value = User.FIELD_AVATAR)
+  private String avatar;
+
+  @Field(value = User.FIELD_IDENTITY)
+  private String identity;
+
+  public User(String username, String email, String password, String status) {
+    this.username = username;
+    this.email = email;
+    this.password = password;
+    this.status = status;
+  }
 }

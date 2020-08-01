@@ -1,53 +1,234 @@
 package com.blibli.demo.company.controller;
 
-import com.blibli.demo.company.command.CreateUserCommand;
-import com.blibli.demo.company.model.Person;
-import com.blibli.demo.company.model.command.CreateUserRequest;
-import com.blibli.demo.company.model.web.CreateUserResponse;
-import com.blibli.demo.company.service.UserService;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
+import com.blibli.demo.base.BaseResponse;
+import com.blibli.demo.base.ListBaseResponse;
+import com.blibli.demo.base.SingleBaseResponse;
+import com.blibli.demo.company.constant.UserStatus;
 import com.blibli.demo.company.entity.User;
-import com.blibli.oss.command.CommandExecutor;
-import com.blibli.oss.common.response.Response;
-import com.blibli.oss.common.response.ResponseHelper;
-import lombok.extern.slf4j.Slf4j;
+import com.blibli.demo.company.entity.ERole;
+import com.blibli.demo.company.entity.Role;
+import com.blibli.demo.company.model.command.CreateUserRequest;
+import com.blibli.demo.company.model.command.LoginRequest;
+import com.blibli.demo.company.model.command.UpdateUserRequest;
+import com.blibli.demo.company.model.web.GetAllUsersResponse;
+import com.blibli.demo.company.model.web.GetUserByIdResponse;
+import com.blibli.demo.company.model.web.JwtResponse;
+import com.blibli.demo.company.model.web.UpdateUserResponse;
+import com.blibli.demo.company.repository.RoleRepository;
+import com.blibli.demo.company.repository.UserRepository;
+import com.blibli.demo.company.security.jwt.JwtUtils;
+import com.blibli.demo.company.security.service.UserDetailsImpl;
+import com.blibli.demo.company.security.service.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
-@Slf4j
-@CrossOrigin
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(value = UserControllerPath.BASE_PATH)
 public class UserController {
+  @Autowired
+  AuthenticationManager authenticationManager;
 
-	@Autowired
-	private UserService userService;
+  @Autowired
+  UserRepository userRepository;
 
-	@Autowired
-	private CommandExecutor commandExecutor;
+  @Autowired
+  RoleRepository roleRepository;
 
-	@RequestMapping(method = RequestMethod.POST)
-	public Flux<User> bulkInsert() {
-		return userService.bulkInsert(1000)
-						.subscribeOn(Schedulers.elastic());
-	}
+  @Autowired
+  PasswordEncoder encoder;
 
-	@RequestMapping(
-					value = UserControllerPath.INSERT,
-					method = RequestMethod.POST,
-					produces = MediaType.APPLICATION_JSON_VALUE,
-					consumes = MediaType.APPLICATION_JSON_VALUE
-	)
-	public Mono<Response<CreateUserResponse>> insert(@RequestBody CreateUserRequest request, Person person) {
+  @Autowired
+  JwtUtils jwtUtils;
 
-    log.info("Request from {}", person.getName());
+  @Autowired
+  private UserService userService;
 
-	  return commandExecutor.execute(CreateUserCommand.class, request)
-						.map(response -> ResponseHelper.ok(response))
-						.subscribeOn(Schedulers.elastic());
-	}
+  @RequestMapping(
+          method = RequestMethod.POST,
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          consumes = MediaType.APPLICATION_JSON_VALUE,
+          value = UserControllerPath.LOGIN
+  )
+  public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
+    Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+    String jwt = jwtUtils.generateJwtToken(authentication);
+
+    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+    List<String> roles = userDetails.getAuthorities().stream()
+            .map(item -> item.getAuthority())
+            .collect(Collectors.toList());
+
+    return ResponseEntity.ok(new SingleBaseResponse<>(null, null, true, null,
+            new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles)));
+  }
+
+  @RequestMapping(
+          method = RequestMethod.POST,
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          consumes = MediaType.APPLICATION_JSON_VALUE,
+          value = UserControllerPath.REGISTER
+  )
+  public ResponseEntity<?> registerUser(@Valid @RequestBody CreateUserRequest signUpRequest) {
+    if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+      return ResponseEntity
+              .badRequest()
+              .body(new BaseResponse("Error: Username is already taken!", "409", false, null));
+    }
+
+    if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+      return ResponseEntity
+              .badRequest()
+              .body(new BaseResponse("Error: Email is already in use!", "409", false, null));
+    }
+
+    // Create new user's account
+    User user = new User(signUpRequest.getUsername(),
+            signUpRequest.getEmail(),
+            encoder.encode(signUpRequest.getPassword()),
+            UserStatus.UNVERIFIED);
+
+    Set<String> strRoles = signUpRequest.getRoles();
+    Set<Role> roles = new HashSet<>();
+
+    if (strRoles == null) {
+      Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+              .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+      roles.add(userRole);
+    } else {
+      strRoles.forEach(role -> {
+        switch (role) {
+          case "admin":
+            Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(adminRole);
+            user.setStatus(UserStatus.VERIFIED);
+
+            break;
+          default:
+            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(userRole);
+        }
+      });
+    }
+
+    user.setRoles(roles);
+    userRepository.save(user);
+
+    return ResponseEntity.ok(new BaseResponse(null, null, true, null));
+  }
+
+  @RequestMapping(
+          method = RequestMethod.GET,
+          produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity getAllUser() throws Exception {
+    List<User> users = this.userService.find();
+    List<GetAllUsersResponse> usersResponses = new ArrayList<>();
+
+    for (User user : users) {
+      GetAllUsersResponse usersResponse = GetAllUsersResponse.builder().build();
+      BeanUtils.copyProperties(user, usersResponse);
+      usersResponses.add(usersResponse);
+    }
+
+    return ResponseEntity.ok(
+            new ListBaseResponse<>(
+                    null,
+                    null,
+                    true,
+                    null,
+                    usersResponses,
+                    null
+            )
+    );
+  }
+
+  @RequestMapping(
+          method = RequestMethod.GET,
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          value = UserControllerPath.GET_BY_ID
+  )
+  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+  public ResponseEntity getUserById(@PathVariable String userId) throws Exception {
+    User user = this.userService.findByUserId(userId);
+    GetUserByIdResponse userResponse = GetUserByIdResponse.builder().build();
+    BeanUtils.copyProperties(user, userResponse);
+
+    return ResponseEntity.ok(new SingleBaseResponse<>(
+            null,
+            null,
+            true,
+            null,
+            userResponse
+    ));
+  }
+
+  @RequestMapping(
+          method = RequestMethod.PUT,
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          consumes = MediaType.APPLICATION_JSON_VALUE,
+          value = UserControllerPath.UPDATE_BY_ID
+  )
+  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+  public ResponseEntity updateUser(@PathVariable String userId, @Valid @RequestBody UpdateUserRequest updateUserRequest) throws Exception {
+    User user = User.builder().build();
+    BeanUtils.copyProperties(updateUserRequest, user);
+
+    User updatedUser = this.userService.update(userId, user);
+
+    return ResponseEntity.ok(new SingleBaseResponse<>(
+            null,
+            null,
+            true,
+            null,
+            new UpdateUserResponse(
+                    updatedUser.getId(),
+                    updatedUser.getUsername(),
+                    updatedUser.getEmail(),
+                    updatedUser.getFullname(),
+                    updatedUser.getPhone(),
+                    updatedUser.getStatus(),
+                    updatedUser.getAvatar(),
+                    updatedUser.getIdentity()
+            )
+    ));
+  }
+
+  @RequestMapping(
+          method = RequestMethod.POST,
+          produces = MediaType.APPLICATION_JSON_VALUE,
+          value = UserControllerPath.LOGOUT
+  )
+  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+  public ResponseEntity logoutUser() {
+    SecurityContext securityContext = SecurityContextHolder.getContext();
+    securityContext.setAuthentication(null);
+
+    return ResponseEntity.ok(new BaseResponse(null, null, true, null));
+  }
 }

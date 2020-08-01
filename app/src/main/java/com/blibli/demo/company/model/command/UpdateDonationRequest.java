@@ -1,4 +1,4 @@
-package com.blibli.demo.company.model.web;
+package com.blibli.demo.company.model.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateUserResponse {
-  private String username;
-  private String email;
+public class UpdateDonationRequest {
+  private String status;
 }
