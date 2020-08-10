@@ -24,12 +24,16 @@ pipeline {
         // }
         stage('Build image') {
             steps {
-                sh 'docker build -t bantosan .'
+                dir('app') {
+                    sh 'docker build -t bantosan .'
+                }
             }
         }
         stage('Run app') {
             steps {
-                sh 'docker run bantosan'
+                dir('app') {
+                    sh 'docker run bantosan'
+                }
             }
         }
     }
