@@ -4,6 +4,9 @@ pipeline {
     }
     stages {
         stage('Build') {
+            dir('app') {
+                sh 'pwd'
+            }
             steps {
                 sh 'mvn -B -DskipTests clean package'
             }
