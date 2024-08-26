@@ -24,7 +24,7 @@
 		<spring-cloud.version>2.1.0.RELEASE</spring-cloud.version>
 		<httpclient.version>4.5.6</httpclient.version>
 		<lombok.version>1.18.4</lombok.version>
-		<swagger.version>2.9.2</swagger.version>
+		<swagger.version>2.10.0</swagger.version>
 		<newrelic-api.version>4.11.0</newrelic-api.version>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
